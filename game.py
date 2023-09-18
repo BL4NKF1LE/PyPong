@@ -2,7 +2,7 @@ import pygame
 
 pygame.init()
 
-WINDOW_WIDTH, WINDOW_HEIGHT = 1500, 1200
+WINDOW_WIDTH, WINDOW_HEIGHT = 1400, 1000
 WINDOW = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 pygame.display.set_caption("Paco's Pong")
 FPS = 60
@@ -13,7 +13,7 @@ PADDLE_WIDTH, PADDLE_HEIGHT = (20, 100)
 class Paddle:
 
     COLOR = PADDLE_COLOR
-    VELOCITY = 4
+    VELOCITY = 8
 
     def __init__(self, x, y, width, height):
         self.x = x
@@ -31,12 +31,13 @@ class Paddle:
         if not up:
             self.y += self.VELOCITY
         
-
 def draw(window, paddles):
     window.fill(BACKGROUND_COLOR)
 
     for paddle in paddles:
         paddle.draw(window)
+
+    pygame.draw.rect(window, PADDLE_COLOR, (WINDOW_WIDTH//2 - 5, 0, 10, WINDOW_HEIGHT))
 
     pygame.display.update()
 
