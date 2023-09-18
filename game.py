@@ -7,6 +7,7 @@ WINDOW = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 pygame.display.set_caption("Paco's Pong")
 FPS = 60
 BACKGROUND_COLOR = (34, 170, 103)
+COURT_COLOR = (255, 255, 255)
 PADDLE_COLOR = (255, 255, 255)
 PADDLE_WIDTH, PADDLE_HEIGHT = (40, 200)
 BALL_COLOR = (204, 255, 0)
@@ -52,17 +53,36 @@ class Ball:
         self.x += self.x_velocity
         self.y += self.y_velocity
 
-
 def draw(window, paddles, ball):
     window.fill(BACKGROUND_COLOR)
 
     for paddle in paddles:
         paddle.draw(window)
 
-    pygame.draw.rect(window, PADDLE_COLOR, (WINDOW_WIDTH//2 - 5, 0, 10, WINDOW_HEIGHT))
+    pygame.draw.rect(window, COURT_COLOR, (WINDOW_WIDTH//2 - 5, 0, 10, WINDOW_HEIGHT))
+
     ball.draw(window)
 
     pygame.display.update()
+
+def collision(ball, player_one, player_two):
+
+    if ball.y + ball.radius >= WINDOW_HEIGHT:
+        ball.y_velocity *= -1
+
+    if ball.y - ball.radius >= 0:
+        ball.y_velocity *= -1
+
+        if ball.x_velocity < 0:
+            if ball.y >= player_one.y and ball.y <= player_one.y + player_one.height:
+                if ball.x - ball.radius <= player_one.x + player_one.width:
+                    ball.x_velocity *= -1
+
+        if ball.x_velocity > 0:
+            if ball.y >= player_two.y and ball.y <= player_two.y + player_two.height:
+                if ball.x + ball.radius >= player_two.x:
+                    ball.x_velocity *= -1
+
 
 def paddle_movement(keys, player_one, player_two):
     if keys[pygame.K_w] and player_one.y - player_one.VELOCITY >= 0:
@@ -96,6 +116,7 @@ def main():
         keys_pressed = pygame.key.get_pressed()
         paddle_movement(keys_pressed, player_one_paddle, player_two_paddle)
         ball.move()
+        collision(ball, player_one_paddle, player_two_paddle)
 
     pygame.quit()
 
