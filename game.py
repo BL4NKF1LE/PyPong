@@ -54,6 +54,7 @@ class Ball:
         self.y += self.y_velocity
 
 def draw(window, paddles, ball):
+    
     window.fill(BACKGROUND_COLOR)
 
     for paddle in paddles:
@@ -67,22 +68,35 @@ def draw(window, paddles, ball):
 
 def collision(ball, player_one, player_two):
 
+    # Ceiling collision
     if ball.y + ball.radius >= WINDOW_HEIGHT:
         ball.y_velocity *= -1
 
-    if ball.y - ball.radius >= 0:
+    if ball.y - ball.radius <= 0:
         ball.y_velocity *= -1
 
-        if ball.x_velocity < 0:
-            if ball.y >= player_one.y and ball.y <= player_one.y + player_one.height:
-                if ball.x - ball.radius <= player_one.x + player_one.width:
-                    ball.x_velocity *= -1
+    # X collision
+    if ball.x_velocity < 0:
+        if ball.y >= player_one.y and ball.y <= player_one.y + player_one.height:
+            if ball.x - ball.radius <= player_one.x + player_one.width:
+                ball.x_velocity *= -1
 
-        if ball.x_velocity > 0:
-            if ball.y >= player_two.y and ball.y <= player_two.y + player_two.height:
-                if ball.x + ball.radius >= player_two.x:
-                    ball.x_velocity *= -1
+                paddle_middle_y = player_one.y + player_one.height / 2
+                y_difference = paddle_middle_y - ball.y
+                reduction_factor = (player_one.height / 2) / ball.MAX_VELOCITY
+                y_velocity = y_difference / reduction_factor
+                ball.y_velocity = y_velocity * -1
 
+    else:
+        if ball.y >= player_two.y and ball.y <= player_two.y + player_two.height:
+            if ball.x + ball.radius >= player_two.x:
+                ball.x_velocity *= -1
+
+                paddle_middle_y = player_two.y + player_two.height / 2
+                y_difference = paddle_middle_y - ball.y
+                reduction_factor = (player_two.height / 2) / ball.MAX_VELOCITY
+                y_velocity = y_difference / reduction_factor
+                ball.y_velocity = y_velocity * -1
 
 def paddle_movement(keys, player_one, player_two):
     if keys[pygame.K_w] and player_one.y - player_one.VELOCITY >= 0:
@@ -99,10 +113,10 @@ def main():
     running = True
     clock = pygame.time.Clock()
 
-    player_one_paddle = Paddle(10, WINDOW_HEIGHT//2 - PADDLE_HEIGHT//2, PADDLE_WIDTH, PADDLE_HEIGHT)
-    player_two_paddle = Paddle(WINDOW_WIDTH - 10 - PADDLE_WIDTH, WINDOW_HEIGHT//2 - PADDLE_HEIGHT//2, PADDLE_WIDTH, PADDLE_HEIGHT)
-    ball = Ball(WINDOW_WIDTH//2, WINDOW_HEIGHT//2, BALL_RADIUS)
-
+    player_one_paddle = Paddle(10, WINDOW_HEIGHT // 2 - PADDLE_HEIGHT // 2, PADDLE_WIDTH, PADDLE_HEIGHT)
+    player_two_paddle = Paddle(WINDOW_WIDTH - 10 - PADDLE_WIDTH, WINDOW_HEIGHT // 2 - PADDLE_HEIGHT // 2, PADDLE_WIDTH, PADDLE_HEIGHT)
+    ball = Ball(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2, BALL_RADIUS)
+    
     while running:
 
         clock.tick(FPS)
