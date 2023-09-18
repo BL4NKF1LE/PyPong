@@ -41,14 +41,14 @@ def draw(window, paddles):
     pygame.display.update()
 
 def paddle_movement(keys, player_one, player_two):
-    if keys[pygame.K_w]:
+    if keys[pygame.K_w] and player_one.y - player_one.VELOCITY >= 0:
         player_one.move(up = True)
-    if keys[pygame.K_s]:
+    if keys[pygame.K_s] and player_one.y + player_one.VELOCITY + player_one.height <= WINDOW_HEIGHT:
         player_one.move(up = False)
 
-    if keys[pygame.K_UP]:
+    if keys[pygame.K_UP] and player_two.y - player_two.VELOCITY >= 0:
         player_two.move(up = True)
-    if keys[pygame.K_DOWN]:
+    if keys[pygame.K_DOWN] and player_two.y + player_two.VELOCITY + player_two.height <= WINDOW_HEIGHT:
         player_two.move(up = False)
 
 def main():
