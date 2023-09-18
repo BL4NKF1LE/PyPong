@@ -12,6 +12,10 @@ PADDLE_COLOR = (255, 255, 255)
 PADDLE_WIDTH, PADDLE_HEIGHT = (40, 200)
 BALL_COLOR = (204, 255, 0)
 BALL_RADIUS = 14
+SCORE_FONT = pygame.font.SysFont('arial', 100)
+SCORE_COLOR = (255, 255, 255)
+WINNING_SCORE = 5
+VICORY_TEXT_COLOR = (255, 255, 255)
 
 class Paddle:
 
@@ -19,8 +23,8 @@ class Paddle:
     VELOCITY = 8
 
     def __init__(self, x, y, width, height):
-        self.x = x
-        self.y = y
+        self.x = self.original_x = x
+        self.y = self.original_y = y
         self.width = width
         self.height = height
 
@@ -34,14 +38,18 @@ class Paddle:
         if not up:
             self.y += self.VELOCITY
 
+    def reset(self):
+        self.x = self.original_x
+        self.y = self.original_y
+
 class Ball:
 
     MAX_VELOCITY = 9
     COLOR = BALL_COLOR
 
     def __init__(self, x, y, radius):
-        self.x = x
-        self.y = y
+        self.x = self.original_x = x
+        self.y = self.original_y = y
         self.radius = radius
         self.x_velocity = self.MAX_VELOCITY
         self.y_velocity = 0
@@ -53,9 +61,20 @@ class Ball:
         self.x += self.x_velocity
         self.y += self.y_velocity
 
-def draw(window, paddles, ball):
+    def reset(self):
+        self.x = self.original_x
+        self.y = self.original_y
+        self.y_velocity = 0
+        self.x_velocity *= -1
+
+def draw(window, paddles, ball, player_one_score, player_two_score):
     
     window.fill(BACKGROUND_COLOR)
+
+    player_one_score = SCORE_FONT.render(f'{player_one_score}', 1, SCORE_COLOR)
+    player_two_score = SCORE_FONT.render(f'{player_two_score}', 1, SCORE_COLOR)
+    window.blit(player_one_score, (WINDOW_WIDTH // 4 - player_one_score.get_width() // 2, 20))
+    window.blit(player_two_score, (WINDOW_WIDTH * (3 / 4) - player_two_score.get_width() // 2, 20))
 
     for paddle in paddles:
         paddle.draw(window)
@@ -116,11 +135,13 @@ def main():
     player_one_paddle = Paddle(10, WINDOW_HEIGHT // 2 - PADDLE_HEIGHT // 2, PADDLE_WIDTH, PADDLE_HEIGHT)
     player_two_paddle = Paddle(WINDOW_WIDTH - 10 - PADDLE_WIDTH, WINDOW_HEIGHT // 2 - PADDLE_HEIGHT // 2, PADDLE_WIDTH, PADDLE_HEIGHT)
     ball = Ball(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2, BALL_RADIUS)
+    player_one_score = 0
+    player_two_score = 0
     
     while running:
 
         clock.tick(FPS)
-        draw(WINDOW, [player_one_paddle, player_two_paddle], ball)
+        draw(WINDOW, [player_one_paddle, player_two_paddle], ball, player_one_score, player_two_score)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -131,6 +152,17 @@ def main():
         paddle_movement(keys_pressed, player_one_paddle, player_two_paddle)
         ball.move()
         collision(ball, player_one_paddle, player_two_paddle)
+
+        if ball.x < 0:
+            player_two_score += 1
+            player_one_paddle.reset()
+            player_two_paddle.reset()
+            ball.reset()
+        if ball.x > WINDOW_WIDTH:
+            player_one_score += 1
+            player_one_paddle.reset()
+            player_two_paddle.reset()
+            ball.reset()
 
     pygame.quit()
 
