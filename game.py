@@ -15,12 +15,12 @@ BALL_RADIUS = 14
 SCORE_FONT = pygame.font.SysFont('arial', 100)
 SCORE_COLOR = (255, 255, 255)
 WINNING_SCORE = 5
-VICORY_TEXT_COLOR = (255, 255, 255)
+VICORY_TEXT_COLOR = (212, 175, 55)
 
 class Paddle:
 
     COLOR = PADDLE_COLOR
-    VELOCITY = 8
+    VELOCITY = 10
 
     def __init__(self, x, y, width, height):
         self.x = self.original_x = x
@@ -44,7 +44,7 @@ class Paddle:
 
 class Ball:
 
-    MAX_VELOCITY = 9
+    MAX_VELOCITY = 12
     COLOR = BALL_COLOR
 
     def __init__(self, x, y, radius):
@@ -137,6 +137,7 @@ def main():
     ball = Ball(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2, BALL_RADIUS)
     player_one_score = 0
     player_two_score = 0
+    win = False
     
     while running:
 
@@ -155,14 +156,31 @@ def main():
 
         if ball.x < 0:
             player_two_score += 1
-            player_one_paddle.reset()
-            player_two_paddle.reset()
             ball.reset()
         if ball.x > WINDOW_WIDTH:
             player_one_score += 1
+            ball.reset()
+
+        if player_one_score == WINNING_SCORE:
+            win = True
+            victory_text = 'Player One Wins!'
+        
+        if player_two_score == WINNING_SCORE:
+            win = True
+            victory_text = 'Player Two Wins!'
+
+        if win:
+            WINDOW.fill(BACKGROUND_COLOR)
+            win_text = SCORE_FONT.render(victory_text, 1, VICORY_TEXT_COLOR)
+            WINDOW.blit(win_text, (WINDOW_WIDTH // 2 - win_text.get_width() // 2, WINDOW_HEIGHT // 2 - win_text.get_height() // 2))
+            pygame.display.update()
+            pygame.time.delay(3000)
+            win = False
+            ball.reset()
             player_one_paddle.reset()
             player_two_paddle.reset()
-            ball.reset()
+            player_one_score = 0
+            player_two_score = 0
 
     pygame.quit()
 
