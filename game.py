@@ -24,7 +24,13 @@ class Paddle:
     def draw(self, window):
         pygame.draw.rect(window, self.COLOR, (self.x, self.y, self.width, self.height))
 
-    
+    def move(self, up = True):
+        if up:
+            self.y -= self.VELOCITY
+        
+        if not up:
+            self.y += self.VELOCITY
+        
 
 def draw(window, paddles):
     window.fill(BACKGROUND_COLOR)
@@ -33,6 +39,17 @@ def draw(window, paddles):
         paddle.draw(window)
 
     pygame.display.update()
+
+def paddle_movement(keys, player_one, player_two):
+    if keys[pygame.K_w]:
+        player_one.move(up = True)
+    if keys[pygame.K_s]:
+        player_one.move(up = False)
+
+    if keys[pygame.K_UP]:
+        player_two.move(up = True)
+    if keys[pygame.K_DOWN]:
+        player_two.move(up = False)
 
 def main():
     running = True
@@ -50,6 +67,9 @@ def main():
             if event.type == pygame.QUIT:
                 running = False
                 break
+
+        keys_pressed = pygame.key.get_pressed()
+        paddle_movement(keys_pressed, player_one_paddle, player_two_paddle)
 
     pygame.quit()
 
