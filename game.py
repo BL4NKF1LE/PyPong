@@ -4,7 +4,7 @@ pygame.init()
 
 WINDOW_WIDTH, WINDOW_HEIGHT = 1400, 1000
 WINDOW = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
-pygame.display.set_caption("Paco's Pong")
+pygame.display.set_caption("Paco's PyPong")
 FPS = 60
 BACKGROUND_COLOR = (63, 82, 109)
 COURT_COLOR = (255, 255, 255)
